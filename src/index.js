@@ -1,8 +1,9 @@
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
+import API from './fetchCountries'
 import './css/styles.css';
 
-var debounce = require('lodash.debounce');
+// var debounce = require('lodash.debounce');
 const DEBOUNCE_DELAY = 300;
 
 const refs = {
@@ -14,29 +15,18 @@ const refs = {
 refs.input.addEventListener('input', debounce(onSearchCountry, DEBOUNCE_DELAY));
 
 function onSearchCountry() {
-    const valueCountry = refs.input.value.trim();
+    let valueCountry = refs.input.value.trim();
     console.log(valueCountry);
-    fetchCountries(valueCountry);
-
-    if (countries.length > 10) {
-        Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");
-    } else if (countries.length >= 2 && countries.length <= 10) {
-        renderCountriesList(countries);
-    } else if (valueCountry === 0) {
-        refs.list.innerHTML = "";
-        refs.info.innerHTML = "";
-    } else if (valueCountry != countries) {
-        Notiflix.Notify.failure("Oops, there is no country with that name")
-    }
-    else {
-        renderCountryInfo(countries);
-    }    
-};
-function fetchCountries() {
-   return fetch('https://restcountries.eu/rest/v2/all?fields=name,capital,population,flags,languages')
-    .then(r => r.json())
-    .then(countries => {console.log(countries);})
-    .catch(error => {console.log(error);})
+    API.fetchCountries(valueCountry)
+    .then(countries => {
+        console.log(countries)
+        if (countries.length > 10) {
+            Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");}
+        else if (countries.length >= 2 && countries.length <= 10) {renderCountriesList(countries);}
+        else if (valueCountry === "") {refs.list.innerHTML = ""; refs.info.innerHTML = "";}
+        else {renderCountryInfo(countries);}    
+    })
+    .catch(onFetchError);
 }
 
 function renderCountriesList(countries) {
@@ -62,10 +52,14 @@ function renderCountryInfo(countries) {
                 </h2>
                 <p>Capital: ${capital}</p>
                 <p>Population: ${population}</p>
-                <p>Languages: ${languages}</p>
+                <p>Languages: ${Object.values(languages)}</p>
             `;
         }).join("");
     for (const country of countries) {
         refs.info.innerHTML = markupInfo;
     }
+}
+
+function onFetchError(error) {
+    Notiflix.Notify.failure("Oops, there is no country with that name")
 }
