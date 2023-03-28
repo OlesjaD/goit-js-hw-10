@@ -10,6 +10,7 @@ const refs = {
     list: document.querySelector('.country-list'),
     info: document.querySelector('.country-info'),
 };
+
 let valueCountry = "";
 refs.input.addEventListener('input', debounce(onSearchCountry, DEBOUNCE_DELAY));
 
@@ -20,15 +21,18 @@ function onSearchCountry(valueCountry) {
     .then(countries => {
         console.log(countries)
         if (countries.length > 10) {
+            clearValueCountries(); clearinfoCountry();
             Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");}
-        else if (countries.length >= 2 && countries.length <= 10) {renderCountriesList(countries);}
-        else if (valueCountry === "") {refs.list.innerHTML = ""; refs.info.innerHTML = "";}
-        else if (!countries.find(country => country.name.official === valueCountry)) {
-            onFetchError(error);
+        else if (countries.length >= 2 && countries.length <= 10) {clearinfoCountry(); renderCountriesList(countries);}
+        else if (valueCountry === "") {clearValueCountries(); clearinfoCountry();}
+        else if (!countries.find(country => country.name === valueCountry)) {
+            onFetchError();
         }
-        else {renderCountryInfo(countries);}    
+        else {
+            clearValueCountries();
+            renderCountryInfo(countries);}    
     })
-    .catch(error);
+    .catch(error =>console.log(error));
 }
 
 function renderCountriesList(countries) {
@@ -41,7 +45,7 @@ function renderCountriesList(countries) {
                 </li>
             `;
         }).join("");
-    refs.list.innerHTML = markupList;
+    refs.list.insertAdjacentHTML('beforeend', markupList);
 }
 
 function renderCountryInfo(countries) {
@@ -57,11 +61,17 @@ function renderCountryInfo(countries) {
                 <p>Languages: ${Object.values(languages)}</p>
             `;
         }).join("");
-    for (const country of countries) {
-        refs.info.innerHTML = markupInfo;
-    }
+    // for (let country of countries) {
+        refs.info.insertAdjacentHTML('beforeend', markupInfo);
+    // }
 }
 
-function onFetchError(error) {
-    Notiflix.Notify.failure("Oops, there is no country with that name")
+function onFetchError() {
+    Notiflix.Notify.failure("Oops, there is no country with that name");
+}
+function clearValueCountries() {
+    refs.list.innerHTML = "";
+}
+function clearinfoCountry() {
+    refs.info.innerHTML = "";
 }
