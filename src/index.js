@@ -25,12 +25,10 @@ function onSearchCountry(valueCountry) {
             Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");}
         else if (countries.length >= 2 && countries.length <= 10) {clearinfoCountry(); renderCountriesList(countries);}
         else if (valueCountry === "") {clearValueCountries(); clearinfoCountry();}
-        else if (!countries.find(country => country.name === valueCountry)) {
-            onFetchError();
-        }
-        else {
+        else if (countries.length === 1) {
             clearValueCountries();
-            renderCountryInfo(countries);}    
+            renderCountryInfo(countries);}  
+        else {onFetchError();}
     })
     .catch(error =>console.log(error));
 }
