@@ -24,12 +24,12 @@ function onSearchCountry(valueCountry) {
             clearValueCountries(); clearinfoCountry();
             Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");}
         else if (countries.length >= 2 && countries.length <= 10) {clearinfoCountry(); renderCountriesList(countries);}
-        else if (countries.length === 0 ) {onFetchError();}
-     
-        else {
+        else if (countries.length === 1) {
             clearValueCountries();
             renderCountryInfo(countries);
-        }
+        }     
+        else {clearValueCountries(); clearinfoCountry(); onFetchError();}
+     
     })
     .catch(error =>console.log(error));
 }
@@ -38,10 +38,10 @@ function renderCountriesList(countries) {
     const markupList = countries
         .map(({name, flags}) => {
             return `
-                <li class="country-list__item">
-                    <img src="${flags.svg}" alt="flags counrty"/>
-                    <p>${name.official}</p>
-                </li>
+                <div class="country-list__item">
+                    <img src="${flags.svg}" alt="flags counrty" width=60px height=40px/>
+                    <span>${name.official}</span>
+                </div>
             `;
         }).join("");
     refs.list.insertAdjacentHTML('beforeend', markupList);
@@ -51,18 +51,18 @@ function renderCountryInfo(countries) {
     const markupInfo = countries 
         .map(({name, capital, population, flags, languages}) => {
             return `
-                <h2 class="country-info__details">
-                    <img src="${flags.svg}" alt="flags counrty" width=240px height=140px/>
-                    <p>${name.official}</p>
-                </h2>
+                <div class="country-info__details">
+                <img src="${flags.svg}" alt="flags counrty" width=240px height=140px/>
+                <h2>${name.official}</h2>
+                
                 <p>Capital: ${capital}</p>
                 <p>Population: ${population}</p>
                 <p>Languages: ${Object.values(languages)}</p>
+                </div>
             `;
         }).join("");
-    // for (let country of countries) {
+    
         refs.info.insertAdjacentHTML('beforeend', markupInfo);
-    // }
 }
 
 function onFetchError() {
