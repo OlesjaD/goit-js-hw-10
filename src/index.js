@@ -24,11 +24,12 @@ function onSearchCountry(valueCountry) {
             clearValueCountries(); clearinfoCountry();
             Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");}
         else if (countries.length >= 2 && countries.length <= 10) {clearinfoCountry(); renderCountriesList(countries);}
-        else if (valueCountry === "") {clearValueCountries(); clearinfoCountry();}
-        else if (countries.length === 1) {
+        else if (countries.length === 0 ) {onFetchError();}
+     
+        else {
             clearValueCountries();
-            renderCountryInfo(countries);}  
-        else {onFetchError();}
+            renderCountryInfo(countries);
+        }
     })
     .catch(error =>console.log(error));
 }
@@ -51,7 +52,7 @@ function renderCountryInfo(countries) {
         .map(({name, capital, population, flags, languages}) => {
             return `
                 <h2 class="country-info__details">
-                    <img src="${flags.svg}" alt="flags counrty"/>
+                    <img src="${flags.svg}" alt="flags counrty" width=240px height=140px/>
                     <p>${name.official}</p>
                 </h2>
                 <p>Capital: ${capital}</p>
