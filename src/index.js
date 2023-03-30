@@ -21,15 +21,14 @@ function onSearchCountry(valueCountry) {
     .then(countries => {
         console.log(countries)
         if (countries.length > 10) {
-            clearValueCountries(); clearinfoCountry();
+            clearValueCountries(); 
             Notiflix.Notify.info("Too many matches found. Please enter a more specific name.");}
-        else if (countries.length >= 2 && countries.length <= 10) {clearinfoCountry(); renderCountriesList(countries);}
+        else if (countries.length >= 2 && countries.length <= 10) { clearValueCountries(); renderCountriesList(countries);}
         else if (countries.length === 1) {
             clearValueCountries();
             renderCountryInfo(countries);
         }     
-        else {clearValueCountries(); clearinfoCountry(); onFetchError();}
-     
+        else {clearValueCountries();  onFetchError();}
     })
     .catch(error =>console.log(error));
 }
@@ -70,7 +69,5 @@ function onFetchError() {
 }
 function clearValueCountries() {
     refs.list.innerHTML = "";
-}
-function clearinfoCountry() {
     refs.info.innerHTML = "";
 }
